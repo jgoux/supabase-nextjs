@@ -9,7 +9,7 @@ import type {
   SupabaseClientOptions,
 } from "@supabase/supabase-js/dist/module/lib/types.js";
 import { defu } from "defu";
-import { cookies } from "next/headers.js";
+import { cookies } from "next/headers";
 
 export function createClient<
   Database = any,
@@ -25,7 +25,7 @@ export function createClient<
     supabaseKey?: string;
   } & SupabaseClientOptions<SchemaName> & {
       cookieOptions?: CookieOptionsWithName;
-      cookies: CookieMethodsServer;
+      cookies?: CookieMethodsServer;
       cookieEncoding?: "raw" | "base64url";
     }
 ): SupabaseClient<Database, SchemaName, Schema> {

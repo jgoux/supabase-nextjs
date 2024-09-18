@@ -1,5 +1,5 @@
 {
-  "name": "@supabase/auth",
+  "name": "@supabase/nextjs",
   "version": "0.1.0",
   "type": "module",
   "scripts": {
@@ -16,12 +16,12 @@
   },
   "files": ["dist"],
   "exports": {
-    "./next": "./dist/next/index.ts",
-    "./next/client": "./dist/next/client.ts",
-    "./next/server": "./dist/next/server.ts"
+    "./client": "./dist/client.js",
+    "./server": "./dist/server/index.js"
   },
   "dependencies": {
-    "defu": "^6.1.4"
+    "defu": "^6.1.4",
+    "regexparam": "^3.0.0"
   },
   "peerDependencies": {
     "@supabase/ssr": "^0.5.1",
