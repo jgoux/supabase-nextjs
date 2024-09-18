@@ -135,4 +135,4 @@ export function LogoutForm() {
 
 ## Credits
 
-Props to [Clerk](https://clerk.com) for the their excellent middleware API.
+Props to [Clerk](https://clerk.com) for their excellent middleware API.
