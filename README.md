@@ -132,3 +132,7 @@ export function LogoutForm() {
   )
 }
 ```
+
+## Credits
+
+Props to [Clerk](https://clerk.com) for the their excellent middleware API.
