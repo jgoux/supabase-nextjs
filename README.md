@@ -1,4 +1,6 @@
-Supabase ❤️ Next.js
+# Supabase ❤️ Next.js
+
+Use Supabase Auth in your Next.js app with ease.
 
 ## Installation
 
