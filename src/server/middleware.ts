@@ -27,6 +27,7 @@ export function supabaseMiddleware(
     paths?: {
       home?: string;
       signIn?: string;
+      error?: string;
     };
   }
 ) {
@@ -36,7 +37,7 @@ export function supabaseMiddleware(
     paths: {
       home: "/",
       signIn: "/sign-in",
-      error: "/error",
+      error: undefined,
     },
   });
 
@@ -80,7 +81,7 @@ export function supabaseMiddleware(
         type,
         token_hash,
       });
-      if (error) {
+      if (error && optionsWithDefaults.paths.error) {
         // redirect user to an error page
         return NextResponse.redirect(
           new URL(optionsWithDefaults.paths.error, request.url)
