@@ -61,7 +61,7 @@ In your components, use the Supabase Client to handle authentication:
 import { createClient } from '@supabase/nextjs/server'
 
 export function SignUpForm() {
-  async function signIn(formData: FormData) {
+  async function signUp(formData: FormData) {
     'use server'
     const email = formData.get('email')
     const password = formData.get('password')
@@ -73,7 +73,7 @@ export function SignUpForm() {
   }
 
   return (
-    <form action={signIn}>
+    <form action={signUp}>
       <input type="email" name="email" />
       <input type="password" name="password" />
       <button>Sign Up</button>
