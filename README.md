@@ -76,7 +76,7 @@ export function SignUpForm() {
     <form action={signIn}>
       <input type="email" name="email" />
       <input type="password" name="password" />
-      <button type="submit">Sign Up</button>
+      <button>Sign Up</button>
     </form>
   )
 }
@@ -104,7 +104,7 @@ export function SignInForm() {
     <form action={signIn}>
       <input type="email" name="email" />
       <input type="password" name="password" />
-      <button type="submit">Sign in</button>
+      <button>Sign in</button>
     </form>
   )
 }
