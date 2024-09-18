@@ -117,8 +117,8 @@ export function SignInForm() {
 import { redirect } from 'next/navigation'
 import { createClient } from '@supabase/nextjs/server'
 
-export function LogoutForm() {
-  async function logout() {
+export function SignOutForm() {
+  async function signOut() {
     'use server'
     const supabase = createClient()
     await supabase.auth.signOut()
@@ -126,7 +126,7 @@ export function LogoutForm() {
   }
 
   return (
-    <form action={logout}>
+    <form action={signOut}>
       <button>Sign Out</button>
     </form>
   )
