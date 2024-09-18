@@ -3,7 +3,6 @@ import type { EmailOtpType, User } from "@supabase/supabase-js";
 import { defu } from "defu";
 import { type NextRequest, NextResponse } from "next/server";
 import { parse } from "regexparam";
-import { createClient } from "./client.js";
 
 export function createRouteMatcher(paths: string[]) {
   const regexPatterns = paths.map((path) => parse(path));
@@ -42,55 +41,6 @@ export function supabaseMiddleware(
   });
 
   return async function middleware(request: NextRequest) {
-    // If it's a server-side confirm action, handle it
-    const { searchParams } = new URL(request.url);
-    const token_hash = searchParams.get("token_hash");
-    const type = searchParams.get("type") as EmailOtpType | null;
-    const isConfirmAction = token_hash && type;
-    if (isConfirmAction) {
-      const next = new URL(
-        searchParams.get("next") ?? optionsWithDefaults.paths.home,
-        request.url
-      );
-      next.searchParams.delete("token_hash");
-      next.searchParams.delete("type");
-      let supabaseResponse = NextResponse.redirect(next);
-      const supabase = createServerClient(
-        optionsWithDefaults.supabaseUrl,
-        optionsWithDefaults.supabaseKey,
-        {
-          cookies: {
-            getAll() {
-              return request.cookies.getAll();
-            },
-            setAll(cookiesToSet) {
-              for (const { name, value } of cookiesToSet) {
-                request.cookies.set(name, value);
-              }
-              supabaseResponse = NextResponse.next({
-                request,
-              });
-              for (const { name, value, options } of cookiesToSet) {
-                supabaseResponse.cookies.set(name, value, options);
-              }
-            },
-          },
-        }
-      );
-      const { error } = await supabase.auth.verifyOtp({
-        type,
-        token_hash,
-      });
-      if (error && optionsWithDefaults.paths.error) {
-        // redirect user to an error page
-        return NextResponse.redirect(
-          new URL(optionsWithDefaults.paths.error, request.url)
-        );
-      }
-      return supabaseResponse;
-    }
-
-    // At this point, we know it's not a confirm action, so we can proceed with the middleware
     let supabaseResponse = NextResponse.next({
       request,
     });
@@ -118,9 +68,33 @@ export function supabaseMiddleware(
       }
     );
 
-    // IMPORTANT: Avoid writing any logic between createServerClient and
-    // supabase.auth.getUser(). A simple mistake could make it very hard to debug
-    // issues with users being randomly logged out.
+    // If it's a server-side confirm action, handle it
+    const { searchParams } = new URL(request.url);
+    const token_hash = searchParams.get("token_hash");
+    const type = searchParams.get("type") as EmailOtpType | null;
+    const isConfirmAction = token_hash && type;
+
+    if (isConfirmAction) {
+      const { error } = await supabase.auth.verifyOtp({
+        type,
+        token_hash,
+      });
+      if (error && optionsWithDefaults.paths.error) {
+        // redirect user to an error page
+        return NextResponse.redirect(
+          new URL(optionsWithDefaults.paths.error, request.url)
+        );
+      }
+
+      const homeUrl = new URL(optionsWithDefaults.paths.home, request.url);
+      homeUrl.searchParams.delete("token_hash");
+      homeUrl.searchParams.delete("type");
+      const redirectedResponse = NextResponse.redirect(homeUrl);
+      for (const cookie of supabaseResponse.cookies.getAll()) {
+        redirectedResponse.cookies.set(cookie);
+      }
+      return redirectedResponse;
+    }
 
     const auth = async () => {
       const {
