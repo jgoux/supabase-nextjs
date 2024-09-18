@@ -51,3 +51,84 @@ export const config = {
   matcher: ['/((?!api|_next/static|_next/image|.*\\.png$).*)']
 }
 ```
+
+In your components, use the Supabase Client to handle authentication:
+
+### Sign up
+
+```tsx
+// app/signup/route.tsx
+import { createClient } from '@supabase/nextjs/server'
+
+export function SignUpForm() {
+  async function signIn(formData: FormData) {
+    'use server'
+    const email = formData.get('email')
+    const password = formData.get('password')
+    const supabase = createClient()
+    const { error } = await supabase.auth.signUp({
+      email,
+      password
+    })
+  }
+
+  return (
+    <form action={signIn}>
+      <input type="email" name="email" />
+      <input type="password" name="password" />
+      <button type="submit">Sign Up</button>
+    </form>
+  )
+}
+```
+
+### Sign in
+
+```tsx
+// app/login/route.tsx
+import { createClient } from '@supabase/nextjs/server'
+
+export function SignInForm() {
+  async function signIn(formData: FormData) {
+    'use server'
+    const email = formData.get('email')
+    const password = formData.get('password')
+    const supabase = createClient()
+    const { error } = await supabase.auth.signIn({
+      email,
+      password
+    })
+  }
+
+  return (
+    <form action={signIn}>
+      <input type="email" name="email" />
+      <input type="password" name="password" />
+      <button type="submit">Sign in</button>
+    </form>
+  )
+}
+```
+
+### Sign out
+
+```tsx
+// components/logout.tsx
+import { redirect } from 'next/navigation'
+import { createClient } from '@supabase/nextjs/server'
+
+export function LogoutForm() {
+  async function logout() {
+    'use server'
+    const supabase = createClient()
+    await supabase.auth.signOut()
+    redirect('/')
+  }
+
+  return (
+    <form action={logout}>
+      <button>Sign Out</button>
+    </form>
+  )
+}
+```
