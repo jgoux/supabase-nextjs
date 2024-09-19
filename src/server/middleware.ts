@@ -4,31 +4,120 @@ import { defu } from "defu";
 import { type NextRequest, NextResponse } from "next/server";
 import { parse } from "regexparam";
 
-export function createRouteMatcher(paths: string[]) {
+/**
+ * Creates a route matcher function based on an array of path patterns.
+ * @param paths - An array of path patterns to match against.
+ * @returns A function that tests if a given request matches any of the paths.
+ * @example
+ * ```ts
+ * const isPublicRoute = createRouteMatcher(['/login(.*)', '/signup(.*)'])
+ * ```
+ */
+export function createRouteMatcher(
+  paths: string[],
+): (request: NextRequest) => boolean {
   const regexPatterns = paths.map((path) => parse(path));
   return (request: NextRequest) =>
     regexPatterns.some(({ pattern }) => pattern.test(request.nextUrl.pathname));
 }
 
+type Auth = () => Promise<{
+  /**
+   * The user object if the user is authenticated, otherwise null.
+   */
+  user: User | null;
+  /**
+   * Redirects the user to the home page.
+   * @returns The response to redirect to the home page.
+   */
+  redirectToHome: () => NextResponse;
+  /**
+   * Redirects the user to the sign-in page.
+   * @returns The response to redirect to the sign-in page.
+   */
+  redirectToSignIn: () => NextResponse;
+}>;
+
+type MiddlewareOptions = {
+  /**
+   * The Supabase URL.
+   * @default process.env.NEXT_PUBLIC_SUPABASE_URL
+   */
+  supabaseUrl?: string;
+  /**
+   * The Supabase key.
+   * @default process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+   */
+  supabaseKey?: string;
+  /**
+   * Custom paths for the middleware.
+   */
+  paths?: {
+    /**
+     * The home page path.
+     * @default "/"
+     */
+    home?: string;
+    /**
+     * The sign-in page path.
+     * @default "/sign-in"
+     */
+    signIn?: string;
+    /**
+     * The error page path.
+     */
+    error?: string;
+  };
+};
+
+/**
+ * Middleware function for handling Supabase authentication in Next.js applications.
+ * @param callback - Optional callback function to handle custom logic.
+ * @param options - Configuration options for the middleware.
+ * @returns Middleware function to be used in Next.js.
+ * @example
+ * ```ts
+ * import { supabaseMiddleware, createRouteMatcher } from '@supabase/nextjs/server'
+ *
+ * const isPublicRoute = createRouteMatcher(['/login(.*)', '/signup(.*)'])
+ *
+ * export default supabaseMiddleware(
+ *   async (auth, request) => {
+ *     const session = await auth()
+ *
+ *     // protect all routes except the public ones
+ *     if (!isPublicRoute(request) && !session.user) {
+ *       return session.redirectToSignIn()
+ *     }
+ *
+ *     // redirect to home if user is logged in and on public route
+ *     if (isPublicRoute(request) && session.user) {
+ *       return session.redirectToHome()
+ *     }
+ *   },
+ *   {
+ *     paths: {
+ *       // custom signIn path
+ *       signIn: '/login'
+ *     }
+ *   }
+ * )
+ * ```
+ */
 export function supabaseMiddleware(
   callback?: (
-    auth: () => Promise<{
-      user: User | null;
-      redirectToHome: () => NextResponse;
-      redirectToSignIn: () => NextResponse;
-    }>,
+    /**
+     * Authentication function that provides user data and redirection methods.
+     * @returns Object containing user data and redirection functions.
+     */
+    auth: Auth,
     request: NextRequest,
     // biome-ignore lint/suspicious/noConfusingVoidType: <explanation>
   ) => Promise<void | NextResponse>,
-  options?: {
-    supabaseUrl?: string;
-    supabaseKey?: string;
-    paths?: {
-      home?: string;
-      signIn?: string;
-      error?: string;
-    };
-  },
+  /**
+   * Configuration options for the middleware.
+   */
+  options?: MiddlewareOptions,
 ) {
   const optionsWithDefaults = defu(options, {
     // biome-ignore lint/style/noNonNullAssertion: <explanation>
