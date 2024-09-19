@@ -67,6 +67,11 @@ type MiddlewareOptions = {
      * The error page path.
      */
     error?: string;
+    /**
+     * The auth confirm path.
+     * @default "/auth/confirm"
+     */
+    authConfirm?: string;
   };
 };
 
@@ -128,8 +133,13 @@ export function supabaseMiddleware(
       home: "/",
       signIn: "/sign-in",
       error: undefined,
+      authConfirm: "/auth/confirm",
     },
   });
+
+  const isAuthConfirmRoute = createRouteMatcher([
+    `${optionsWithDefaults.paths.authConfirm}(.*)`,
+  ]);
 
   return async function middleware(request: NextRequest) {
     let supabaseResponse = NextResponse.next({
@@ -159,21 +169,22 @@ export function supabaseMiddleware(
       },
     );
 
-    // If it's a server-side confirm action, handle it
-    const { searchParams } = new URL(request.url);
-    const token_hash = searchParams.get("token_hash");
-    const type = searchParams.get("type") as EmailOtpType | null;
-    const isConfirmAction = token_hash && type;
-
-    if (isConfirmAction) {
+    if (isAuthConfirmRoute(request)) {
+      const { searchParams } = new URL(request.url);
+      const token_hash = searchParams.get("token_hash");
+      const type = searchParams.get("type") as EmailOtpType | null;
       const { error } = await supabase.auth.verifyOtp({
-        type,
-        token_hash,
+        // biome-ignore lint/style/noNonNullAssertion: we rely on verifyOtp in case of error
+        type: type!,
+        // biome-ignore lint/style/noNonNullAssertion: we rely on verifyOtp in case of error
+        token_hash: token_hash!,
       });
-      if (error && optionsWithDefaults.paths.error) {
-        // redirect user to an error page
+      if (error) {
         return NextResponse.redirect(
-          new URL(optionsWithDefaults.paths.error, request.url),
+          new URL(
+            optionsWithDefaults.paths.error ?? optionsWithDefaults.paths.signIn,
+            request.url,
+          ),
         );
       }
 
