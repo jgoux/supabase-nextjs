@@ -22,5 +22,6 @@ jobs:
       - name: Publish release
         uses: ghalactic/github-release-from-tag@v5
         with:
+          prerelease: false
           assets: |
-            - path: release/*
+            - path: release/*.tgz
