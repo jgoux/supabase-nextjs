@@ -133,6 +133,47 @@ export function SignOutForm() {
 }
 ```
 
+## TypeScript
+
+You can type your Supabase Client against your generated Supabase Database types.
+
+### Generate Supabase Database Types
+
+Local database:
+
+```bash
+npx supabase gen types --lang=typescript --local > src/types/database.ts
+```
+
+Remote database:
+
+```bash
+npx supabase gen types --lang=typescript --project-id "<your-project-id>" > src/types/database.ts
+```
+
+### Configure `@supabase-labs/nextjs` to use the generated types
+
+> [!WARNING]  
+> You can only declare modules that you are actually importing in your project.
+> For example if you're not importing `@supabase-labs/nextjs/client` anywhere in your project, the module declaration will fail.
+
+```ts
+// types/supabase.ts
+import type { Database } from './types/database'
+
+declare module '@supabase-labs/nextjs/client' {
+  interface Register {
+    database: Database
+  }
+}
+
+declare module '@supabase-labs/nextjs/server' {
+  interface Register {
+    database: Database
+  }
+}
+```
+
 ## Credits
 
 Props to [Clerk](https://clerk.com) for their excellent middleware API.
