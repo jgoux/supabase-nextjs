@@ -1,0 +1,13 @@
+name: Tests
+runs:
+  using: 'composite'
+  steps:
+    - name: Lint
+      shell: bash
+      run: pnpm lint
+    - name: Type Check
+      shell: bash
+      run: pnpm type-check
+    # - name: Test
+    #   shell: bash
+    #   run: pnpm test
