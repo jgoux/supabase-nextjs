@@ -1,9 +1,17 @@
 name: Test and Publish
+
 on:
   push:
-    branches: [main]
+    branches:
+      - main
   pull_request:
-    branches: [main]
+    branches:
+      - main
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+  
 jobs:
   ci:
     runs-on: ubuntu-latest

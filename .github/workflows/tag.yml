@@ -1,0 +1,31 @@
+name: Create a tag from a new package version
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'package.json'
+
+concurrency:
+  group: tag-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  tag-release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Check package version
+        id: package_version
+        uses: PostHog/check-package-version@v2
+        with:
+          path: packages/seed
+      - name: Create a new tag
+        if: steps.package_version.outputs.is-new-version == 'true'
+        uses: Klemensas/action-autotag@stable
+        with:
+          tag_prefix: "v"
+        env:
+          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"

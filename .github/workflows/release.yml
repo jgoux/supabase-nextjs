@@ -1,8 +1,14 @@
 name: Create a GitHub Release and publish to npmjs
+
 on:
   push:
     tags:
       - "v*"
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: true
+  
 jobs:
   release:
     runs-on: ubuntu-latest
