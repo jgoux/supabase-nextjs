@@ -153,24 +153,45 @@ npx supabase gen types --lang=typescript --project-id "<your-project-id>" > src/
 
 ### Configure `@supabase-labs/nextjs` to use the generated types
 
+You can configure `@supabase-labs/nextjs` to use the generated types in two ways:
+
+#### Using Module Augmentation
+
+This is the recommended approach. Your client will be directly typed against your database when you import it from `@supabase-labs/nextjs`.
+
 > [!WARNING]  
 > You can only declare modules that you are actually importing in your project.
-> For example if you're not importing `@supabase-labs/nextjs/client` anywhere in your project, the module declaration will fail.
+> For example if you're not importing `@supabase-labs/nextjs/server` anywhere in your project, the module declaration will fail.
 
 ```ts
 // types/supabase.ts
 import type { Database } from './types/database'
 
-declare module '@supabase-labs/nextjs/client' {
+declare module '@supabase-labs/nextjs/server' {
   interface Register {
     database: Database
   }
 }
 
-declare module '@supabase-labs/nextjs/server' {
-  interface Register {
-    database: Database
-  }
+// uncomment if you're using the Supabase Client client-side
+// declare module '@supabase-labs/nextjs/client' {
+//   interface Register {
+//     database: Database
+//   }
+// }
+```
+
+#### Re-exporting the Supabase Client
+
+This approach is useful if you want to customise the options of the Supabase Client.
+
+```ts
+// lib/supabase.ts
+import { createClient as createSupabaseClient } from '@supabase/nextjs/server'
+import type { Database } from '@/types/database'
+
+export function createClient() {
+  return createSupabaseClient<Database>(/* custom options */)
 }
 ```
 
