@@ -1,4 +1,4 @@
-name: Create a GitHub Release
+name: Create a GitHub Release and publish to npmjs
 on:
   push:
     tags:
@@ -19,9 +19,14 @@ jobs:
         run: pnpm build
       - name: Pack
         run: pnpm pack --pack-destination release
-      - name: Publish release
+      - name: Create GitHub Release
         uses: ghalactic/github-release-from-tag@v5
         with:
           prerelease: false
           assets: |
             - path: release/*.tgz
+      - name: Publish to npmjs
+        run: pnpm publish --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NPM_CONFIG_PROVENANCE: true
