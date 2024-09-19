@@ -2,6 +2,9 @@
 
 Use Supabase Auth in your Next.js app with ease.
 
+> [!WARNING]  
+> This is a `@supabase-labs` experimental package. Expect breaking changes!
+
 ## Installation
 
 ```sh
