@@ -31,7 +31,9 @@ export function supabaseMiddleware(
   }
 ) {
   const optionsWithDefaults = defu(options, {
+    // biome-ignore lint/style/noNonNullAssertion: <explanation>
     supabaseUrl: process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    // biome-ignore lint/style/noNonNullAssertion: <explanation>
     supabaseKey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     paths: {
       home: "/",

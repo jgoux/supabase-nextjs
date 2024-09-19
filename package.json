@@ -3,12 +3,15 @@
   "version": "0.1.0",
   "type": "module",
   "scripts": {
-    "build": "tsc"
+    "build": "tsc",
+    "lint": "biome lint",
+    "type-check": "tsc --noEmit"
   },
   "keywords": ["supabase", "nextjs", "next", "next.js", "auth"],
   "author": "Julien Goux",
   "license": "MIT",
-  "description": "Framework integrations for Supabase Auth",
+  "repository": "github:jgoux/supabase-nextjs",
+  "description": "Supabase Auth integration for Next.js",
   "devDependencies": {
     "@biomejs/biome": "1.9.1",
     "@total-typescript/tsconfig": "^1.0.4",
