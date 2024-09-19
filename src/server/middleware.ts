@@ -17,7 +17,7 @@ export function supabaseMiddleware(
       redirectToHome: () => NextResponse;
       redirectToSignIn: () => NextResponse;
     }>,
-    request: NextRequest
+    request: NextRequest,
     // biome-ignore lint/suspicious/noConfusingVoidType: <explanation>
   ) => Promise<void | NextResponse>,
   options?: {
@@ -28,7 +28,7 @@ export function supabaseMiddleware(
       signIn?: string;
       error?: string;
     };
-  }
+  },
 ) {
   const optionsWithDefaults = defu(options, {
     // biome-ignore lint/style/noNonNullAssertion: <explanation>
@@ -67,7 +67,7 @@ export function supabaseMiddleware(
             }
           },
         },
-      }
+      },
     );
 
     // If it's a server-side confirm action, handle it
@@ -84,7 +84,7 @@ export function supabaseMiddleware(
       if (error && optionsWithDefaults.paths.error) {
         // redirect user to an error page
         return NextResponse.redirect(
-          new URL(optionsWithDefaults.paths.error, request.url)
+          new URL(optionsWithDefaults.paths.error, request.url),
         );
       }
 
@@ -105,13 +105,13 @@ export function supabaseMiddleware(
 
       const redirectToHome = () => {
         return NextResponse.redirect(
-          new URL(optionsWithDefaults.paths.home, request.url)
+          new URL(optionsWithDefaults.paths.home, request.url),
         );
       };
 
       const redirectToSignIn = () => {
         return NextResponse.redirect(
-          new URL(optionsWithDefaults.paths.signIn, request.url)
+          new URL(optionsWithDefaults.paths.signIn, request.url),
         );
       };
 

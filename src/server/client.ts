@@ -19,8 +19,8 @@ export function createClient<
     : string & keyof Database,
   Schema extends GenericSchema = Database[SchemaName] extends GenericSchema
     ? Database[SchemaName]
-    // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-    : any
+    : // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+      any,
 >(
   options?: {
     supabaseUrl?: string;
@@ -29,7 +29,7 @@ export function createClient<
       cookieOptions?: CookieOptionsWithName;
       cookies?: CookieMethodsServer;
       cookieEncoding?: "raw" | "base64url";
-    }
+    },
 ): SupabaseClient<Database, SchemaName, Schema> {
   const cookieStore = cookies();
 
@@ -59,6 +59,6 @@ export function createClient<
   return createServerClient(
     optionsWithDefaults.supabaseUrl,
     optionsWithDefaults.supabaseKey,
-    optionsWithDefaults
+    optionsWithDefaults,
   );
 }

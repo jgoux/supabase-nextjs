@@ -18,8 +18,8 @@ export function createClient<
     : string & keyof Database,
   Schema extends GenericSchema = Database[SchemaName] extends GenericSchema
     ? Database[SchemaName]
-    // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-    : any
+    : // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+      any,
 >(
   options?: {
     supabaseUrl?: string;
@@ -29,7 +29,7 @@ export function createClient<
       cookieOptions?: CookieOptionsWithName;
       cookieEncoding?: "raw" | "base64url";
       isSingleton?: boolean;
-    }
+    },
 ): SupabaseClient<Database, SchemaName, Schema> {
   const optionsWithDefaults = defu(options, {
     // biome-ignore lint/style/noNonNullAssertion: <explanation>
@@ -41,6 +41,6 @@ export function createClient<
   return createBrowserClient(
     optionsWithDefaults.supabaseUrl,
     optionsWithDefaults.supabaseKey,
-    options
+    options,
   );
 }

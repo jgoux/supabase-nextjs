@@ -1,0 +1,24 @@
+name: Test and Publish
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup
+        uses: ./.github/actions/setup
+      - name: Lint
+        run: pnpm lint
+      - name: Type Check
+        run: pnpm type-check
+      # - name: Test
+      #   run: pnpm test
+      - name: Build
+        run: pnpm build
+      - name: Publish
+        run: pnpx pkg-pr-new publish

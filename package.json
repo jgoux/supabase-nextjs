@@ -4,7 +4,7 @@
   "type": "module",
   "scripts": {
     "build": "tsc",
-    "lint": "biome lint",
+    "lint": "biome check",
     "type-check": "tsc --noEmit"
   },
   "keywords": ["supabase", "nextjs", "next", "next.js", "auth"],
@@ -30,5 +30,6 @@
     "@supabase/ssr": "^0.5.1",
     "@supabase/supabase-js": "^2.45.4",
     "next": "^14.0.0-0 || ^15.0.0-0"
-  }
+  },
+  "packageManager": "pnpm@9.10.0"
 }
