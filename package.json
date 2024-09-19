@@ -1,12 +1,12 @@
 {
-  "name": "@supabase/nextjs",
+  "name": "@supabase-labs/nextjs",
   "version": "0.1.0",
   "type": "module",
   "scripts": {
     "build": "tsc"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": ["supabase", "nextjs", "next", "next.js", "auth"],
+  "author": "Julien Goux",
   "license": "MIT",
   "description": "Framework integrations for Supabase Auth",
   "devDependencies": {
@@ -27,10 +27,5 @@
     "@supabase/ssr": "^0.5.1",
     "@supabase/supabase-js": "^2.45.4",
     "next": "^14.0.0-0 || ^15.0.0-0"
-  },
-  "peerDependenciesMeta": {
-    "next": {
-      "optional": true
-    }
   }
 }

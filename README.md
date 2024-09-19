@@ -5,7 +5,7 @@ Use Supabase Auth in your Next.js app with ease.
 ## Installation
 
 ```sh
-npm install @supabase/nextjs
+npm install @supabase-labs/nextjs
 ```
 
 ## Usage
