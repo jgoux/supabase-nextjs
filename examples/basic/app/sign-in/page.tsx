@@ -1,7 +1,7 @@
 "use client";
 
-import { signIn } from "@/app/actions/auth/sign-in";
 import { useFormState, useFormStatus } from "react-dom";
+import { signIn } from "./action";
 
 export default function SignInPage() {
   const [state, action] = useFormState(signIn, undefined);

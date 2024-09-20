@@ -1,16 +1,14 @@
+import SignOutButton from "@/components/sign-out-button/sign-out-button";
 import { createClient } from "@supabase-labs/nextjs/server";
-import { signOut } from "./actions/auth/sign-out";
 
 export default async function HomePage() {
   const supabase = createClient();
-  const { data } = await supabase.auth.getSession();
+  const { data } = await supabase.auth.getUser();
 
   return (
     <div>
-      Hello {data.session?.user.email}, you are authenticated!
-      <form action={signOut}>
-        <button type="submit">Sign Out</button>
-      </form>
+      Hello {data.user?.email}, you are authenticated!
+      <SignOutButton />
     </div>
   );
 }
