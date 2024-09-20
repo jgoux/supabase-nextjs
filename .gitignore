@@ -2,3 +2,4 @@ dist
 release
 node_modules
 .turbo
+tsconfig.tsbuildinfo
