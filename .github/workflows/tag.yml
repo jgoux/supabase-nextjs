@@ -5,11 +5,15 @@ on:
     branches:
       - main
     paths:
-      - 'package.json'
+      - 'packages/nextjs/package.json'
 
 concurrency:
   group: tag-${{ github.ref }}
   cancel-in-progress: true
+
+defaults:
+  run:
+    working-directory: ./packages/nextjs
 
 jobs:
   tag-release:
@@ -20,6 +24,8 @@ jobs:
       - name: Check package version
         id: package_version
         uses: PostHog/check-package-version@v2
+        with:
+          path: ./packages/nextjs/package.json
       - name: Create a new tag
         if: steps.package_version.outputs.is-new-version == 'true'
         uses: Klemensas/action-autotag@stable

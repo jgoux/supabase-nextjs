@@ -9,6 +9,10 @@ concurrency:
   group: release-${{ github.ref }}
   cancel-in-progress: true
   
+defaults:
+  run:
+    working-directory: ./packages/nextjs
+
 jobs:
   release:
     runs-on: ubuntu-latest
