@@ -25,11 +25,12 @@ jobs:
         id: package_version
         uses: PostHog/check-package-version@v2
         with:
-          path: ./packages/nextjs
+          path: packages/nextjs
       - name: Create a new tag
         if: steps.package_version.outputs.is-new-version == 'true'
         uses: Klemensas/action-autotag@stable
         with:
+          package_root: packages/nextjs
           tag_prefix: "v"
         env:
           GITHUB_TOKEN: "${{ secrets.GH_PAT }}"
