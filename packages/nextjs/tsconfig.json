@@ -2,7 +2,7 @@
   "extends": "@total-typescript/tsconfig/tsc/no-dom/library",
   "compilerOptions": {
     "outDir": "dist",
-    "rootDir": "packages/nextjs/src",
+    "rootDir": "src",
     "moduleResolution": "Bundler",
     "module": "ESNext"
   }

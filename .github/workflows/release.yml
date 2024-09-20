@@ -8,7 +8,7 @@ on:
 concurrency:
   group: release-${{ github.ref }}
   cancel-in-progress: true
-  
+
 defaults:
   run:
     working-directory: ./packages/nextjs
@@ -35,7 +35,7 @@ jobs:
         with:
           prerelease: false
           assets: |
-            - path: release/*.tgz
+            - path: packages/nextjs/release/*.tgz
       - name: Publish to npmjs
         run: pnpm publish --access public --no-git-checks
         env:

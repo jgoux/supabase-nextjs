@@ -1,5 +1,5 @@
 {
-  "name": "basic",
+  "name": "@examples/basic",
   "version": "0.1.0",
   "private": true,
   "scripts": {

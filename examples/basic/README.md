@@ -6,17 +6,19 @@ To run this example:
 
 ```bash
 pnpm install
-npx supabase start
+pnpx supabase start
 pnpm -w build --filter=basic
 pnpm start
 ```
+
+# Configuration steps used in this example
 
 ## Supabase configuration
 
 Initialize Supabase
 
 ```bash
-npx supabase init
+pnpx supabase init
 ```
 
 Define the confirmation email template for PKCE authentication flow
