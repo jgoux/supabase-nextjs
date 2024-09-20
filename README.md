@@ -37,8 +37,6 @@ const isPublicRoute = createRouteMatcher(['/login(.*)', '/signup(.*)'])
 
 export default supabaseMiddleware(
   async (auth, request) => {
-    const session = await auth()
-
     // protect all routes except the public ones
     if (!isPublicRoute(request)) {
       auth().protect()
