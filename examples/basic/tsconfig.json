@@ -28,10 +28,5 @@
     ".next/types/**/*.ts",
     "next.config.mjs"
   ],
-  "exclude": ["node_modules"],
-  "references": [
-    {
-      "path": "../../packages/nextjs"
-    }
-  ]
+  "exclude": ["node_modules"]
 }
