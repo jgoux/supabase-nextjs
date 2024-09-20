@@ -1,6 +1,6 @@
 import { signOut } from "./action";
 
-export default function SignOutButton() {
+export function SignOutButton() {
   return (
     <form action={signOut}>
       <button type="submit">Sign Out</button>

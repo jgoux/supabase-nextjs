@@ -1,4 +1,4 @@
-import SignOutButton from "@/components/sign-out-button/sign-out-button";
+import { SignOutButton } from "@/components/sign-out-button/sign-out-button";
 import { createClient } from "@supabase-labs/nextjs/server";
 
 export default async function HomePage() {
