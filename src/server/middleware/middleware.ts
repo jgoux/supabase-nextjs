@@ -1,42 +1,45 @@
 import { createServerClient } from "@supabase/ssr";
 import type { EmailOtpType, User } from "@supabase/supabase-js";
 import { defu } from "defu";
-import { type NextRequest, NextResponse } from "next/server";
-import { parse } from "regexparam";
+import {
+  type NextFetchEvent,
+  type NextRequest,
+  NextResponse,
+} from "next/server";
 
-/**
- * Creates a route matcher function based on an array of path patterns.
- * @param paths - An array of path patterns to match against.
- * @returns A function that tests if a given request matches any of the paths.
- * @example
- * ```ts
- * const isPublicRoute = createRouteMatcher(['/login(.*)', '/signup(.*)'])
- * ```
- */
-export function createRouteMatcher(
-  paths: string[],
-): (request: NextRequest) => boolean {
-  const regexPatterns = paths.map((path) => parse(path));
-  return (request: NextRequest) =>
-    regexPatterns.some(({ pattern }) => pattern.test(request.nextUrl.pathname));
-}
+import type { NextMiddlewareResult } from "next/dist/server/web/types";
+import { createRouteMatcher } from "./create-route-matcher";
+import { type Has, createHas } from "./has";
+import {
+  type AuthProtect,
+  createProtect,
+  handleControlFlowErrors,
+  redirect,
+  redirectToSignIn,
+} from "./protect";
 
-type Auth = () => Promise<{
+type Auth = () => {
+  /**
+   * Checks if the user has the given properties.
+   */
+  has: Has;
+  /**
+   * Protects the route from unauthenticated or unauthorized access.
+   */
+  protect: AuthProtect;
+  /**
+   * Redirects the user to the sign-in page.
+   */
+  redirectToSignIn: () => void;
+  /**
+   * Redirects the user to a given url.
+   */
+  redirect: (url: string) => void;
   /**
    * The user object if the user is authenticated, otherwise null.
    */
   user: User | null;
-  /**
-   * Redirects the user to the home page.
-   * @returns The response to redirect to the home page.
-   */
-  redirectToHome: () => NextResponse;
-  /**
-   * Redirects the user to the sign-in page.
-   * @returns The response to redirect to the sign-in page.
-   */
-  redirectToSignIn: () => NextResponse;
-}>;
+};
 
 type MiddlewareOptions = {
   /**
@@ -54,19 +57,10 @@ type MiddlewareOptions = {
    */
   paths?: {
     /**
-     * The home page path.
-     * @default "/"
-     */
-    home?: string;
-    /**
-     * The sign-in page path.
+     * The sign-in path.
      * @default "/sign-in"
      */
     signIn?: string;
-    /**
-     * The error page path.
-     */
-    error?: string;
     /**
      * The auth confirm path.
      * @default "/auth/confirm"
@@ -117,8 +111,8 @@ export function supabaseMiddleware(
      */
     auth: Auth,
     request: NextRequest,
-    // biome-ignore lint/suspicious/noConfusingVoidType: <explanation>
-  ) => Promise<void | NextResponse>,
+    event: NextFetchEvent,
+  ) => NextMiddlewareResult,
   /**
    * Configuration options for the middleware.
    */
@@ -141,7 +135,10 @@ export function supabaseMiddleware(
     `${optionsWithDefaults.paths.authConfirm}(.*)`,
   ]);
 
-  return async function middleware(request: NextRequest) {
+  return async function middleware(
+    request: NextRequest,
+    event: NextFetchEvent,
+  ) {
     let supabaseResponse = NextResponse.next({
       request,
     });
@@ -198,48 +195,32 @@ export function supabaseMiddleware(
       return redirectedResponse;
     }
 
-    const auth = async () => {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
 
-      const redirectToHome = () => {
-        return NextResponse.redirect(
-          new URL(optionsWithDefaults.paths.home, request.url),
-        );
-      };
-
-      const redirectToSignIn = () => {
-        return NextResponse.redirect(
-          new URL(optionsWithDefaults.paths.signIn, request.url),
-        );
-      };
+    const auth = () => {
+      const protect = createProtect(user);
 
       return {
-        user,
+        has: createHas(user),
+        protect,
+        redirect,
         redirectToSignIn,
-        redirectToHome,
+        user,
       };
     };
 
-    const callbackResponse = await callback?.(auth, request);
-
-    if (callbackResponse) {
-      return callbackResponse;
+    try {
+      const callbackResponse = callback?.(auth, request, event);
+      if (callbackResponse) {
+        return callbackResponse;
+      }
+    } catch (error) {
+      return handleControlFlowErrors(error, request, {
+        signInPath: optionsWithDefaults.paths.signIn,
+      });
     }
-
-    // IMPORTANT: You *must* return the supabaseResponse object as it is. If you're
-    // creating a new response object with NextResponse.next() make sure to:
-    // 1. Pass the request in it, like so:
-    //    const myNewResponse = NextResponse.next({ request })
-    // 2. Copy over the cookies, like so:
-    //    myNewResponse.cookies.setAll(supabaseResponse.cookies.getAll())
-    // 3. Change the myNewResponse object to fit your needs, but avoid changing
-    //    the cookies!
-    // 4. Finally:
-    //    return myNewResponse
-    // If this is not done, you may be causing the browser and server to go out
-    // of sync and terminate the user's session prematurely!
 
     return supabaseResponse;
   };
