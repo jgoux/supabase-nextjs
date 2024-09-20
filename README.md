@@ -7,8 +7,16 @@ Use Supabase Auth in your Next.js app with ease.
 
 ## Installation
 
+Install the package:
+
 ```sh
 npm install @supabase-labs/nextjs
+```
+
+If you don't have them already installed, install the required peer dependencies:
+
+```sh
+npm install next @supabase/ssr @supabase/supabase-js
 ```
 
 ## Usage
@@ -32,13 +40,13 @@ export default supabaseMiddleware(
     const session = await auth()
 
     // protect all routes except the public ones
-    if (!isPublicRoute(request) && !session.user) {
-      return session.redirectToSignIn()
+    if (!isPublicRoute(request)) {
+      auth().protect()
     }
 
-    // redirect to home if user is logged in and on public route
-    if (isPublicRoute(request) && session.user) {
-      return session.redirectToHome()
+    // redirect to home if public route and user is logged in
+    if (isPublicRoute(request) && auth().user) {
+      auth().redirect("/")
     }
   },
   {
