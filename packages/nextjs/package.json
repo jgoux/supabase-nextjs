@@ -1,13 +1,13 @@
 {
   "name": "@supabase-labs/nextjs",
-  "version": "0.1.8",
+  "version": "0.1.7",
   "type": "module",
   "scripts": {
     "build": "tsc",
     "lint": "biome check",
     "type-check": "tsc --noEmit"
   },
-  "keywords": ["supabase", "nextjs", "next", "next.js", "auth"],
+  "keywords": ["supabase", "nextjs", "next", "next.js", "auth."],
   "author": "Julien Goux",
   "license": "MIT",
   "repository": "github:jgoux/supabase-nextjs",
