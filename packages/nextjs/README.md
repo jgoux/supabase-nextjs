@@ -36,7 +36,7 @@ import { supabaseMiddleware, createRouteMatcher } from '@supabase/nextjs/server'
 const isPublicRoute = createRouteMatcher(['/login(.*)', '/signup(.*)'])
 
 export default supabaseMiddleware(
-  async (auth, request) => {
+  (auth, request) => {
     // protect all routes except the public ones
     if (!isPublicRoute(request)) {
       auth().protect()
