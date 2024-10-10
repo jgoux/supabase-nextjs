@@ -53,9 +53,9 @@ npx supabase start
 
 ## Next.js configuration
 
-Copy `.env.example` to `.env.local` and set the `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` environment variables.
+Copy `.env.example` to `.env.local` and set the `NEXT_PUBLIC_SUPABASE_ANON_KEY` environment variable.
 
-If you need to get the supabase url and anon key, you can get them using the following command:
+If you need to get the supabase anon key, you can get it using the following command:
 
 ```bash
 npx supabase status

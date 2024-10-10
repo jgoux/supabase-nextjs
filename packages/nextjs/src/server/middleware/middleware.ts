@@ -57,16 +57,51 @@ type MiddlewareOptions = {
    */
   paths?: {
     /**
+     * The home path.
+     * @default "/"
+     */
+    home?: string;
+    /**
      * The sign-in path.
      * @default "/sign-in"
      */
     signIn?: string;
     /**
-     * The auth confirm path.
+     * The confirm path for the email/otp authentication flow.
      * @default "/auth/confirm"
      */
     authConfirm?: string;
+    /**
+     * The callback path for the social login flow.
+     * @default "/auth/callback"
+     */
+    socialLoginCallback?: string;
+    /**
+     * The error path.
+     * @default undefined
+     */
+    error?: string;
   };
+};
+
+type DefaultPaths = Required<
+  Omit<NonNullable<MiddlewareOptions["paths"]>, "error">
+> & {
+  /**
+   * The error path.
+   * @default undefined
+   */
+  error?: string;
+};
+
+/**
+ * Default paths for the middleware.
+ */
+export const defaultPaths: DefaultPaths = {
+  home: "/",
+  signIn: "/sign-in",
+  authConfirm: "/auth/confirm",
+  socialLoginCallback: "/auth/callback",
 };
 
 /**
@@ -123,16 +158,15 @@ export function supabaseMiddleware(
     supabaseUrl: process.env.NEXT_PUBLIC_SUPABASE_URL!,
     // biome-ignore lint/style/noNonNullAssertion: <explanation>
     supabaseKey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    paths: {
-      home: "/",
-      signIn: "/sign-in",
-      error: undefined,
-      authConfirm: "/auth/confirm",
-    },
+    paths: defaultPaths,
   });
 
   const isAuthConfirmRoute = createRouteMatcher([
     `${optionsWithDefaults.paths.authConfirm}(.*)`,
+  ]);
+
+  const isSocialLoginCallbackRoute = createRouteMatcher([
+    `${optionsWithDefaults.paths.socialLoginCallback}(.*)`,
   ]);
 
   return async function middleware(
@@ -165,6 +199,40 @@ export function supabaseMiddleware(
         },
       },
     );
+
+    if (isSocialLoginCallbackRoute(request)) {
+      const { searchParams, origin } = new URL(request.url);
+      const code = searchParams.get("code");
+      const next = searchParams.get("next") ?? optionsWithDefaults.paths.home;
+      const errorResponse = NextResponse.redirect(
+        new URL(
+          optionsWithDefaults.paths.error ?? optionsWithDefaults.paths.signIn,
+          request.url,
+        ),
+      );
+      if (!code) {
+        return errorResponse;
+      }
+      const { error } = await supabase.auth.exchangeCodeForSession(code);
+      if (error) {
+        return errorResponse;
+      }
+
+      const websiteURL =
+        /**
+         * @see https://vercel.community/t/create-a-website-url-env-variable-for-all-environments/804
+         */
+        process.env.NEXT_PUBLIC_WEBSITE_URL ??
+        request.headers.get("x-forwarded-host") ??
+        origin;
+
+      const redirectedResponse = NextResponse.redirect(`${websiteURL}${next}`);
+      for (const cookie of supabaseResponse.cookies.getAll()) {
+        redirectedResponse.cookies.set(cookie);
+      }
+
+      return redirectedResponse;
+    }
 
     if (isAuthConfirmRoute(request)) {
       const { searchParams } = new URL(request.url);
