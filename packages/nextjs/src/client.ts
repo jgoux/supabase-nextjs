@@ -1,36 +1,10 @@
-import {
-  type CookieMethodsBrowser,
-  type CookieOptionsWithName,
-  createBrowserClient,
-} from "@supabase/ssr";
+import { type CookieMethodsBrowser, createBrowserClient } from "@supabase/ssr";
 import type { SupabaseClient } from "@supabase/supabase-js";
-import type {
-  GenericSchema,
-  SupabaseClientOptions,
-} from "@supabase/supabase-js/dist/module/lib/types.js";
+import type { GenericSchema } from "@supabase/supabase-js/dist/module/lib/types.js";
 import { defu } from "defu";
+import type { CreateClientOptions, RegisteredDatabase } from "./types";
 
-/**
- * The following types are necessary to enable Module Declaration which allows to globally type the Supabase client
- * against a generated `Database` type.
- * This trick is based on TanStack Router's implementation.
- *
- * @see https://tanstack.com/router/latest/docs/framework/react/guide/tanstack-start#the-router-configuration
- */
-
-// biome-ignore lint/suspicious/noEmptyInterface: <explanation>
-export interface Register {
-  // database: Database
-}
-
-// biome-ignore lint/suspicious/noExplicitAny: <explanation>
-export type AnyDatabase = any;
-
-export type RegisteredDatabase = Register extends {
-  database: infer TDatabase extends AnyDatabase;
-}
-  ? TDatabase
-  : AnyDatabase;
+export type { Register } from "./types";
 
 export function createClient<
   TDatabase = RegisteredDatabase,
@@ -43,15 +17,9 @@ export function createClient<
     : // biome-ignore lint/suspicious/noExplicitAny: <explanation>
       any,
 >(
-  options?: {
-    supabaseUrl?: string;
-    supabaseKey?: string;
-  } & SupabaseClientOptions<TSchemaName> & {
-      cookies?: CookieMethodsBrowser;
-      cookieOptions?: CookieOptionsWithName;
-      cookieEncoding?: "raw" | "base64url";
-      isSingleton?: boolean;
-    },
+  options?: CreateClientOptions<TSchemaName, CookieMethodsBrowser> & {
+    isSingleton?: boolean;
+  },
 ): SupabaseClient<TDatabase, TSchemaName, TSchema> {
   const optionsWithDefaults = defu(options, {
     // biome-ignore lint/style/noNonNullAssertion: <explanation>

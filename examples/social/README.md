@@ -20,7 +20,7 @@ Create a GitHub OAuth application following our [GitHub authentication guide](ht
 If you are using the example as is, you can use the following values:
 
 - Homepage URL: `http://localhost:3000`
-- Authorization callback URL: `http://localhost:3000/auth/callback`
+- Authorization callback URL: `http://localhost:54321/auth/v1/callback`
 
 ## Environment variables
 
@@ -40,13 +40,13 @@ Enable the GitHub external authentication provider
 # supabase/config.toml
 
 [auth]
-additional_redirect_urls = ["http://localhost:3000/auth/callback"]
+additional_redirect_urls = ["env(SUPABASE_AUTH_REDIRECT_URI)"]
 
 [auth.external.github]
 enabled = true
 client_id = "env(SUPABASE_AUTH_GITHUB_CLIENT_ID)"
 secret = "env(SUPABASE_AUTH_GITHUB_SECRET)"
-redirect_uri = "env(SUPABASE_AUTH_GITHUB_REDIRECT_URI)"
+redirect_uri = "env(SUPABASE_AUTH_PROVIDER_REDIRECT_URI)"
 ```
 
 Start Supabase
@@ -57,7 +57,7 @@ npx supabase start
 
 ## Next.js configuration
 
-Set the  `NEXT_PUBLIC_SUPABASE_ANON_KEY` environment variable in your `.env.local` file.
+Set the `NEXT_PUBLIC_SUPABASE_ANON_KEY` environment variable in your `.env.local` file.
 
 If you need to get the supabase anon key, you can get it using the following command:
 

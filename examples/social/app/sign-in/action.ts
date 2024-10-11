@@ -15,7 +15,7 @@ export async function signIn(_state: FormState, _formData: FormData) {
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: "github",
     options: {
-      redirectTo: process.env.NEXT_PUBLIC_SUPABASE_AUTH_SOCIAL_REDIRECT_URI,
+      redirectTo: process.env.SUPABASE_AUTH_REDIRECT_URI,
     },
   });
 

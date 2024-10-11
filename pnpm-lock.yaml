@@ -35,9 +35,6 @@ importers:
       react-dom:
         specifier: ^18
         version: 18.3.1(react@18.3.1)
-      server-only:
-        specifier: ^0.0.1
-        version: 0.0.1
       zod:
         specifier: ^3.23.8
         version: 3.23.8
@@ -55,8 +52,8 @@ importers:
         specifier: ^18
         version: 18.3.0
       supabase:
-        specifier: ^1.204.3
-        version: 1.204.3
+        specifier: ^1.206.0
+        version: 1.206.0
       typescript:
         specifier: ^5.6.3
         version: 5.6.3
@@ -81,9 +78,6 @@ importers:
       react-dom:
         specifier: ^18
         version: 18.3.1(react@18.3.1)
-      server-only:
-        specifier: ^0.0.1
-        version: 0.0.1
     devDependencies:
       '@biomejs/biome':
         specifier: 1.9.1
@@ -98,8 +92,8 @@ importers:
         specifier: ^18
         version: 18.3.0
       supabase:
-        specifier: ^1.204.3
-        version: 1.204.3
+        specifier: ^1.206.0
+        version: 1.206.0
       typescript:
         specifier: ^5.6.3
         version: 5.6.3
@@ -121,6 +115,9 @@ importers:
       regexparam:
         specifier: ^3.0.0
         version: 3.0.0
+      server-only:
+        specifier: ^0.0.1
+        version: 0.0.1
     devDependencies:
       '@biomejs/biome':
         specifier: 1.9.1
@@ -676,8 +673,8 @@ packages:
       babel-plugin-macros:
         optional: true
 
-  supabase@1.204.3:
-    resolution: {integrity: sha512-uO09eyAw7TZAX/7wPeieQBWrl4QAJ0WLF+HTkFy35GWBmQULP5nkJR93LcuhSyooYiqwEUKlChEF/PGAEmTCKw==}
+  supabase@1.206.0:
+    resolution: {integrity: sha512-zfmFreYATkhWJ8fNpO4DOwz/Ebj+xpbXRM2QJz14H15MJ9rQOpF9M2XdMOjJumyg6iv1M88ekCGk6ZeUZIknnA==}
     engines: {npm: '>=8'}
     hasBin: true
 
@@ -1248,7 +1245,7 @@ snapshots:
       client-only: 0.0.1
       react: 18.3.1
 
-  supabase@1.204.3:
+  supabase@1.206.0:
     dependencies:
       bin-links: 5.0.0
       https-proxy-agent: 7.0.5

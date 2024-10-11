@@ -1,11 +1,10 @@
 project_id = "social"
 
 [auth]
-# TODO: accept env variables in additional_redirect_urls and use "env(NEXT_PUBLIC_SUPABASE_AUTH_SOCIAL_REDIRECT_URI)"
-additional_redirect_urls = ["http://localhost:3000/auth/callback"]
+additional_redirect_urls = ["env(SUPABASE_AUTH_REDIRECT_URI)"]
 
 [auth.external.github]
 enabled = true
 client_id = "env(SUPABASE_AUTH_GITHUB_CLIENT_ID)"
 secret = "env(SUPABASE_AUTH_GITHUB_SECRET)"
-redirect_uri = "env(SUPABASE_AUTH_SOCIAL_REDIRECT_URI)"
+redirect_uri = "env(SUPABASE_AUTH_PROVIDER_REDIRECT_URI)"
